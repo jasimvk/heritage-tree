@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Heritage Tree | EndurxLabs",
-  description: "A collaborative, beautifully visual family tree engine.",
+  title: "Cheruvattam Family Tree",
+  description: "A collaborative, beautifully visual family tree for the Cheruvattam Family.",
 };
 
 export default function RootLayout({

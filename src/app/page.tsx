@@ -80,8 +80,8 @@ export default function Home() {
               <TreePine size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-800 uppercase">Our <span className="text-amber-600 font-light italic">Heritage</span></h1>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Family Legacy Archive</p>
+              <h1 className="text-xl font-black tracking-tight text-slate-800 uppercase">Cheruvattam <span className="text-amber-600 font-light italic">Family</span></h1>
+              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">The Cheruvattam Legacy</p>
             </div>
           </div>
 
@@ -101,7 +101,7 @@ export default function Home() {
         {/* Intro */}
         <section className="max-w-3xl mx-auto text-center px-6 mb-16">
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6 leading-tight">
-                Our Family Tree
+                Cheruvattam Family Tree
             </h2>
             <p className="text-lg text-slate-500 font-medium italic">
                 "A people without the knowledge of their past history, origin and culture is like a tree without roots."
