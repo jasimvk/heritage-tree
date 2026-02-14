@@ -132,7 +132,7 @@ export default function Home() {
                   </p>
               </div>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter opacity-50">
-                  Powered by Jasim AI • 2026
+                  Cheruvattam Family Tree • 2026
               </p>
           </div>
       </footer>

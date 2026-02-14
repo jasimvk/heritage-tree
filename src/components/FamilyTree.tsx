@@ -80,7 +80,7 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
             onClick={() => onAddMember()}
             className="px-8 py-4 bg-amber-600 text-white rounded-2xl font-bold hover:bg-amber-700 transition-all shadow-xl"
           >
-            Start the Family Tree
+            Start the Cheruvattam Tree
           </button>
         </div>
       )}

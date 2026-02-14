@@ -28,7 +28,7 @@ export default function LoginPage() {
         </div>
         
         <h1 className="text-3xl font-black tracking-tight text-slate-800 mb-2 uppercase">
-          Our <span className="text-amber-600 font-light italic">Heritage</span>
+          Cheruvattam <span className="text-amber-600 font-light italic">Family</span>
         </h1>
         <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-10">
           Enter Family PIN to access
@@ -64,7 +64,7 @@ export default function LoginPage() {
 
         <div className="mt-12 pt-8 border-t border-slate-100">
           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
-            An EndurxLabs Production • 2026
+            Cheruvattam Family • 2026
           </p>
         </div>
       </div>
