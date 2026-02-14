@@ -76,24 +76,21 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-40 bg-white/70 backdrop-blur-xl border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-amber-200">
               <TreePine size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-800">HERITAGE <span className="text-blue-600 font-light italic">TREE</span></h1>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">EndurxLabs Legacy Engine</p>
+              <h1 className="text-xl font-black tracking-tight text-slate-800 uppercase">Our <span className="text-amber-600 font-light italic">Heritage</span></h1>
+              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Family Legacy Archive</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-             <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-sm font-bold transition-all">
-                <Share2 size={16} /> Share Tree
-             </button>
              <button 
                 onClick={() => handleAddMember()}
-                className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full text-sm font-bold shadow-xl shadow-zinc-200 transition-all transform active:scale-95"
+                className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-full text-sm font-bold shadow-xl shadow-amber-100 transition-all transform active:scale-95"
              >
-                Add Member
+                Add Family Member
              </button>
           </div>
         </div>
@@ -103,12 +100,11 @@ export default function Home() {
       <main className="pt-32 pb-20">
         {/* Intro */}
         <section className="max-w-3xl mx-auto text-center px-6 mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-slate-800 mb-6 leading-tight">
-                Your family legacy, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">digitized forever.</span>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6 leading-tight">
+                Our Family Tree
             </h2>
-            <p className="text-lg text-slate-500 font-medium">
-                A collaborative family tree platform where every member contributes to the living history of your bloodline.
+            <p className="text-lg text-slate-500 font-medium italic">
+                "A people without the knowledge of their past history, origin and culture is like a tree without roots."
             </p>
         </section>
 
