@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { FamilyMember } from "@/types/family";
 import MemberNode from "./MemberNode";
 import { Plus, Users } from "lucide-react";
@@ -14,7 +14,6 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [lines, setLines] = useState<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
 
-  // Function to calculate line positions
   const updateLines = () => {
     if (!containerRef.current) return;
     const newLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
@@ -53,20 +52,25 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
     if (children.length === 0) return [];
 
     return [
-      <div key={parentId || 'root'} className="flex flex-col items-center gap-24">
-        <div className="flex gap-16 items-start justify-center flex-wrap px-12">
+      <div key={parentId || 'root'} className="flex flex-col items-center gap-12">
+        <div className="flex gap-8 items-start justify-center flex-wrap px-4">
           {children.map(child => (
-            <div key={child.id} className="flex flex-col items-center gap-24">
+            <div key={child.id} className="flex flex-col items-center gap-12">
               <div className="relative group" data-member-id={child.id}>
                 <MemberNode member={child} />
                 <button
-                  onClick={() => onAddMember(child.id)}
-                  className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-4 py-2 rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-xl z-10 hover:scale-110 flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onAddMember(child.id);
+                  }}
+                  className="absolute -right-3 -top-3 bg-blue-600 text-white w-7 h-7 rounded-full shadow-lg z-10 flex items-center justify-center border-2 border-white hover:bg-blue-700 transition-colors"
+                  title="Add relative"
                 >
-                  <Plus size={14} /> Add Child
+                  <Plus size={14} strokeWidth={3} />
                 </button>
               </div>
-              <div className="flex gap-16">
+              <div className="flex gap-8">
                 {buildTree(child.id)}
               </div>
             </div>
@@ -77,19 +81,19 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-[600px] w-full flex justify-center pt-10">
+    <div ref={containerRef} className="relative min-h-[600px] w-full flex justify-center pt-20">
       {members.length > 0 ? (
         <>
           <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
             {lines.map((line, i) => (
               <path
                 key={i}
-                d={`M ${line.x1} ${line.y1} C ${line.x1} ${(line.y1 + line.y2) / 2}, ${line.x2} ${(line.y1 + line.y2) / 2}, ${line.x2} ${line.y2}`}
+                d={`M ${line.x1} ${line.y1} L ${line.x1} ${line.y1 + 24} L ${line.x2} ${line.y1 + 24} L ${line.x2} ${line.y2}`}
                 fill="none"
-                stroke="#fbbf24"
-                strokeWidth="3"
+                stroke="#cbd5e1"
+                strokeWidth="1.5"
                 strokeLinecap="round"
-                className="opacity-20"
+                strokeLinejoin="round"
               />
             ))}
           </svg>
@@ -98,17 +102,17 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
           </div>
         </>
       ) : (
-        <div className="text-center py-32 bg-white rounded-[3rem] shadow-2xl shadow-slate-200 border border-slate-100 p-20 max-w-2xl mx-auto">
-          <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-            <Users size={40} />
+        <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-slate-200 p-10 max-w-lg mx-auto">
+          <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Users size={32} />
           </div>
-          <h3 className="text-3xl font-serif font-black text-slate-800 mb-4">The story begins with you.</h3>
-          <p className="text-slate-500 font-medium mb-10 leading-relaxed">No family members have been approved yet. Start building the Cheruvattam legacy by adding the first member.</p>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">No members found</h3>
+          <p className="text-slate-500 text-sm mb-8">Start your family tree by adding the first member.</p>
           <button
             onClick={() => onAddMember()}
-            className="px-10 py-5 bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-amber-700 transition-all shadow-2xl shadow-amber-200 hover:scale-105 active:scale-95"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-all shadow-sm active:scale-95"
           >
-            Create Founding Member
+            Add Founding Member
           </button>
         </div>
       )}

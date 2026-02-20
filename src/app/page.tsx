@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import FamilyTree from "@/components/FamilyTree";
 import AddMemberModal from "@/components/AddMemberModal";
 import { FamilyMember } from "@/types/family";
-import { TreePine, Info } from "lucide-react";
+import { TreePine, Plus } from "lucide-react";
 
 export default function Home() {
   const [members, setMembers] = useState<FamilyMember[]>([]);
@@ -23,7 +23,6 @@ export default function Home() {
       const data = await res.json();
       
       if (data && Array.isArray(data)) {
-        // Only show approved members for the public tree
         setMembers(data.filter((m: any) => m.status === 'approved' || !m.status));
       } else {
         setMembers([]);
@@ -50,7 +49,7 @@ export default function Home() {
       });
 
       if (res.ok) {
-        alert("Member submitted for admin approval!");
+        fetchMembers();
       }
     } catch (e) {
       console.error("Save error:", e);
@@ -60,53 +59,40 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">
-      {/* Premium Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/70 backdrop-blur-xl border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-amber-200">
-              <TreePine size={24} />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans">
+      {/* Geni-inspired Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-full mx-auto px-6 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white">
+              <TreePine size={20} />
             </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-800 uppercase">Cheruvattam <span className="text-amber-600 font-light italic">Family</span></h1>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">The Cheruvattam Legacy</p>
-            </div>
+            <h1 className="text-lg font-bold tracking-tight text-slate-800">Family Tree</h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
              <button 
                 onClick={() => handleAddMember()}
-                className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-full text-sm font-bold shadow-xl shadow-amber-100 transition-all transform active:scale-95"
+                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-bold flex items-center gap-2 transition-colors"
              >
-                Add Family Member
+                <Plus size={16} /> Add
              </button>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="pt-32 pb-20">
-        {/* Tree Container */}
-        <div className="relative overflow-auto pb-40 px-4">
+      <main className="pt-20">
+        <div className="relative overflow-auto p-8 h-[calc(100vh-80px)]">
             {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+                <div className="flex justify-center items-center h-full">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
             ) : (
                 <FamilyTree members={members} onAddMember={handleAddMember} />
             )}
         </div>
       </main>
-
-      {/* Footer Info */}
-      <footer className="fixed bottom-6 left-6 right-6 pointer-events-none">
-          <div className="max-w-7xl mx-auto flex justify-end items-end">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter opacity-50">
-                  Cheruvattam Family Tree • 2026
-              </p>
-          </div>
-      </footer>
 
       <AddMemberModal
         isOpen={isModalOpen}

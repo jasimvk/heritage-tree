@@ -2,7 +2,7 @@
 
 import { FamilyMember } from "@/types/family";
 import { motion } from "framer-motion";
-import { User, Heart } from "lucide-react";
+import { User } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
@@ -23,49 +23,42 @@ export default function MemberNode({ member, onClick }: MemberNodeProps) {
   return (
     <Link href={`/profile/${member.id}`}>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.02 }}
         className={cn(
-          "relative flex flex-col items-center p-8 rounded-[3rem] border transition-all cursor-pointer w-56 bg-white/80 backdrop-blur-xl",
-          isMale ? "border-amber-100 hover:border-amber-400 shadow-[0_20px_50px_rgba(251,191,36,0.1)]" : 
-          isFemale ? "border-emerald-100 hover:border-emerald-400 shadow-[0_20px_50px_rgba(52,211,153,0.1)]" : 
-          "border-zinc-100 hover:border-zinc-400 shadow-xl"
+          "relative flex items-center p-3 rounded-lg border shadow-sm cursor-pointer w-[280px] bg-white transition-all",
+          isMale ? "border-blue-200 border-l-4 border-l-blue-500" : 
+          "border-pink-200 border-l-4 border-l-pink-500"
         )}
       >
-        {/* Avatar or Placeholder */}
+        {/* Simple Avatar */}
         <div className={cn(
-          "w-28 h-28 rounded-[2rem] flex items-center justify-center mb-4 shadow-inner overflow-hidden border-4 border-white",
-          isMale ? "bg-amber-50 text-amber-500" : 
-          isFemale ? "bg-emerald-50 text-emerald-500" : 
-          "bg-zinc-50 text-zinc-500"
+          "w-12 h-12 rounded flex-shrink-0 flex items-center justify-center mr-3 overflow-hidden",
+          isMale ? "bg-blue-50 text-blue-400" : "bg-pink-50 text-pink-400"
         )}>
           {member.photo_url ? (
             <img src={member.photo_url} alt={member.first_name} className="w-full h-full object-cover" />
           ) : (
-            <User size={48} />
+            <User size={24} />
           )}
         </div>
 
-        <div className="text-center">
-          <h3 className="font-black text-slate-800 text-xl tracking-tight leading-tight">
-            {member.first_name}
-          </h3>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">
-            {member.last_name}
-          </p>
-          <p className="text-xs text-slate-400 mt-3 font-bold uppercase tracking-widest">
-            {member.birth_date ? new Date(member.birth_date).getFullYear() : "Legacy"}
-          </p>
-        </div>
-
-        {/* Decorative Icons */}
-        <div className="absolute top-4 right-4 flex gap-1">
-          {member.spouse_id && (
-            <div className="bg-rose-500 text-white p-1.5 rounded-full shadow-lg">
-              <Heart size={14} fill="currentColor" />
-            </div>
-          )}
+        <div className="min-w-0 flex-1">
+          <div className="flex justify-between items-start">
+            <h3 className="font-bold text-slate-900 text-sm truncate leading-tight">
+              {member.first_name} {member.last_name}
+            </h3>
+          </div>
+          <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 font-medium">
+             <span>{member.birth_date ? new Date(member.birth_date).getFullYear() : "?"}</span>
+             {member.death_date && (
+                <>
+                  <span>-</span>
+                  <span>{new Date(member.death_date).getFullYear()}</span>
+                </>
+             )}
+          </div>
         </div>
       </motion.div>
     </Link>
