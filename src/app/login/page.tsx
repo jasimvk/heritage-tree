@@ -12,7 +12,7 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pin === "786") {
-      document.cookie = "family_token=authorized; path=/; max-age=864000"; // 100 days
+      document.cookie = "family_token=authorized; path=/; max-age=31536000"; // 1 year
       router.push("/");
     } else {
       setError(true);

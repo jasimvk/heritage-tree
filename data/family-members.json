@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "first_name": "Cheruvattam",
+    "last_name": "Patriarch",
+    "gender": "male",
+    "status": "approved",
+    "created_at": "2026-02-14T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "first_name": "Kareem",
+    "last_name": "Cheruvattam",
+    "gender": "male",
+    "father_id": "1",
+    "status": "approved",
+    "created_at": "2026-02-14T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "first_name": "Jasim",
+    "last_name": "Kareem",
+    "gender": "male",
+    "father_id": "2",
+    "status": "approved",
+    "created_at": "2026-02-14T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "first_name": "Jinas",
+    "last_name": "Kareem",
+    "gender": "male",
+    "father_id": "2",
+    "status": "approved",
+    "created_at": "2026-02-14T00:00:00.000Z"
+  }
+]

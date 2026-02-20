@@ -4,9 +4,7 @@ import { useState, useEffect } from "react";
 import FamilyTree from "@/components/FamilyTree";
 import AddMemberModal from "@/components/AddMemberModal";
 import { FamilyMember } from "@/types/family";
-import { MOCK_MEMBERS } from "@/lib/mock";
-import { supabase } from "@/lib/supabase";
-import { TreePine, Share2, Info } from "lucide-react";
+import { TreePine, Info } from "lucide-react";
 
 export default function Home() {
   const [members, setMembers] = useState<FamilyMember[]>([]);
@@ -21,22 +19,18 @@ export default function Home() {
   const fetchMembers = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error("Error fetching members:", error);
-        // Fallback to mock data if supabase not configured
-        if (members.length === 0) setMembers(MOCK_MEMBERS);
-      } else if (data && data.length > 0) {
-        setMembers(data);
+      const res = await fetch('/api/members');
+      const data = await res.json();
+      
+      if (data && Array.isArray(data)) {
+        // Only show approved members for the public tree
+        setMembers(data.filter((m: any) => m.status === 'approved' || !m.status));
       } else {
-        setMembers(MOCK_MEMBERS);
+        setMembers([]);
       }
     } catch (e) {
-      setMembers(MOCK_MEMBERS);
+      console.error("Fetch error:", e);
+      setMembers([]);
     } finally {
       setIsLoading(false);
     }
@@ -48,23 +42,18 @@ export default function Home() {
   };
 
   const handleSaveMember = async (memberData: Partial<FamilyMember>) => {
-    const newMember = {
-      ...memberData,
-      id: Math.random().toString(36).substr(2, 9), // Temp ID
-      created_at: new Date().toISOString(),
-    } as FamilyMember;
-
     try {
-      const { data, error } = await supabase
-        .from('members')
-        .insert([memberData])
-        .select();
+      const res = await fetch('/api/members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(memberData),
+      });
 
-      if (error) throw error;
-      if (data) fetchMembers();
+      if (res.ok) {
+        alert("Member submitted for admin approval!");
+      }
     } catch (e) {
-      // Offline mode/No DB: just update local state
-      setMembers([...members, newMember]);
+      console.error("Save error:", e);
     }
     
     setIsModalOpen(false);
@@ -98,21 +87,11 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="pt-32 pb-20">
-        {/* Intro */}
-        <section className="max-w-3xl mx-auto text-center px-6 mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-800 mb-6 leading-tight">
-                Cheruvattam Family Tree
-            </h2>
-            <p className="text-lg text-slate-500 font-medium italic">
-                "A people without the knowledge of their past history, origin and culture is like a tree without roots."
-            </p>
-        </section>
-
         {/* Tree Container */}
-        <div className="relative overflow-auto pb-40">
+        <div className="relative overflow-auto pb-40 px-4">
             {isLoading ? (
                 <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
                 </div>
             ) : (
                 <FamilyTree members={members} onAddMember={handleAddMember} />
@@ -122,15 +101,7 @@ export default function Home() {
 
       {/* Footer Info */}
       <footer className="fixed bottom-6 left-6 right-6 pointer-events-none">
-          <div className="max-w-7xl mx-auto flex justify-between items-end">
-              <div className="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-2xl pointer-events-auto flex items-center gap-4 max-w-md">
-                  <div className="bg-blue-100 text-blue-600 p-2 rounded-lg">
-                      <Info size={20} />
-                  </div>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      <strong>How to use:</strong> Hover over any family member to add their children. Click a member to view details. All changes are saved in real-time.
-                  </p>
-              </div>
+          <div className="max-w-7xl mx-auto flex justify-end items-end">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter opacity-50">
                   Cheruvattam Family Tree • 2026
               </p>

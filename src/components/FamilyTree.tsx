@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { FamilyMember } from "@/types/family";
 import MemberNode from "./MemberNode";
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 
 interface FamilyTreeProps {
   members: FamilyMember[];
@@ -12,75 +11,104 @@ interface FamilyTreeProps {
 }
 
 export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
-  // Organize members into generations
-  // For simplicity, we'll calculate generations based on parent-child links
-  const generations = useMemo(() => {
-    const genMap: Record<number, FamilyMember[]> = {};
-    const memberGen: Record<string, number> = {};
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [lines, setLines] = useState<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
 
-    // 1. Find roots (members with no parents in the current list)
-    const roots = members.filter(m => !m.father_id && !m.mother_id);
-    
-    const calculateGen = (memberId: string, gen: number) => {
-      if (memberGen[memberId] !== undefined) return;
-      memberGen[memberId] = gen;
-      if (!genMap[gen]) genMap[gen] = [];
-      const member = members.find(m => m.id === memberId);
-      if (member) genMap[gen].push(member);
+  // Function to calculate line positions
+  const updateLines = () => {
+    if (!containerRef.current) return;
+    const newLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    const nodes = containerRef.current.querySelectorAll("[data-member-id]");
+    const containerRect = containerRef.current.getBoundingClientRect();
 
-      // Find children
-      const children = members.filter(m => m.father_id === memberId || m.mother_id === memberId);
-      children.forEach(child => calculateGen(child.id, gen + 1));
-    };
+    nodes.forEach((node) => {
+      const childId = node.getAttribute("data-member-id");
+      const member = members.find(m => m.id === childId);
+      if (member && member.father_id) {
+        const parentNode = containerRef.current?.querySelector(`[data-member-id="${member.father_id}"]`);
+        if (parentNode) {
+          const childRect = node.getBoundingClientRect();
+          const parentRect = parentNode.getBoundingClientRect();
 
-    roots.forEach(root => calculateGen(root.id, 0));
-
-    // Handle disconnected members
-    members.forEach(m => {
-      if (memberGen[m.id] === undefined) {
-        calculateGen(m.id, 0);
+          newLines.push({
+            x1: parentRect.left + parentRect.width / 2 - containerRect.left,
+            y1: parentRect.bottom - containerRect.top,
+            x2: childRect.left + childRect.width / 2 - containerRect.left,
+            y2: childRect.top - containerRect.top,
+          });
+        }
       }
     });
+    setLines(newLines);
+  };
 
-    return Object.keys(genMap).sort((a, b) => Number(a) - Number(b)).map(key => genMap[Number(key)]);
+  useEffect(() => {
+    updateLines();
+    window.addEventListener("resize", updateLines);
+    return () => window.removeEventListener("resize", updateLines);
   }, [members]);
 
-  return (
-    <div className="flex flex-col items-center gap-24 p-12 min-h-screen">
-      {generations.map((gen, idx) => (
-        <div key={idx} className="relative flex flex-wrap justify-center gap-12 items-start">
-          {gen.map(member => (
-            <div key={member.id} className="relative group">
-              <MemberNode member={member} />
-              
-              {/* Add child button visible on hover */}
-              <button
-                onClick={() => onAddMember(member.id)}
-                className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10 hover:scale-105 flex items-center gap-1 text-xs font-bold"
-              >
-                <Plus size={14} /> Add Child
-              </button>
+  const buildTree = (parentId?: string): React.ReactNode[] => {
+    const children = members.filter(m => m.father_id === parentId || (parentId === undefined && !m.father_id && !m.mother_id));
+    if (children.length === 0) return [];
+
+    return [
+      <div key={parentId || 'root'} className="flex flex-col items-center gap-24">
+        <div className="flex gap-16 items-start justify-center flex-wrap px-12">
+          {children.map(child => (
+            <div key={child.id} className="flex flex-col items-center gap-24">
+              <div className="relative group" data-member-id={child.id}>
+                <MemberNode member={child} />
+                <button
+                  onClick={() => onAddMember(child.id)}
+                  className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-4 py-2 rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-xl z-10 hover:scale-110 flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+                >
+                  <Plus size={14} /> Add Child
+                </button>
+              </div>
+              <div className="flex gap-16">
+                {buildTree(child.id)}
+              </div>
             </div>
           ))}
-
-          {/* SVG Connector layer for the whole generation */}
-          {idx < generations.length - 1 && (
-            <div className="absolute top-full h-24 w-full flex justify-center pointer-events-none">
-                {/* Visual indicator for downward flow */}
-                <div className="w-[2px] bg-gradient-to-b from-amber-200 to-transparent h-full"></div>
-            </div>
-          )}
         </div>
-      ))}
+      </div>
+    ];
+  };
 
-      {members.length === 0 && (
-        <div className="text-center py-20">
-          <h3 className="text-2xl font-bold text-zinc-400 mb-4 text-balance">Every story has a beginning.</h3>
+  return (
+    <div ref={containerRef} className="relative min-h-[600px] w-full flex justify-center pt-10">
+      {members.length > 0 ? (
+        <>
+          <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+            {lines.map((line, i) => (
+              <path
+                key={i}
+                d={`M ${line.x1} ${line.y1} C ${line.x1} ${(line.y1 + line.y2) / 2}, ${line.x2} ${(line.y1 + line.y2) / 2}, ${line.x2} ${line.y2}`}
+                fill="none"
+                stroke="#fbbf24"
+                strokeWidth="3"
+                strokeLinecap="round"
+                className="opacity-20"
+              />
+            ))}
+          </svg>
+          <div className="relative z-10">
+            {buildTree()}
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-32 bg-white rounded-[3rem] shadow-2xl shadow-slate-200 border border-slate-100 p-20 max-w-2xl mx-auto">
+          <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
+            <Users size={40} />
+          </div>
+          <h3 className="text-3xl font-serif font-black text-slate-800 mb-4">The story begins with you.</h3>
+          <p className="text-slate-500 font-medium mb-10 leading-relaxed">No family members have been approved yet. Start building the Cheruvattam legacy by adding the first member.</p>
           <button
             onClick={() => onAddMember()}
-            className="px-8 py-4 bg-amber-600 text-white rounded-2xl font-bold hover:bg-amber-700 transition-all shadow-xl"
+            className="px-10 py-5 bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-amber-700 transition-all shadow-2xl shadow-amber-200 hover:scale-105 active:scale-95"
           >
-            Start the Cheruvattam Tree
+            Create Founding Member
           </button>
         </div>
       )}
