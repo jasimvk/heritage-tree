@@ -68,14 +68,14 @@ export default function Home() {
               <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white text-lg">
                 C
               </div>
-              <h1 className="text-lg font-bold tracking-tight text-slate-800 hidden sm:block">Cheruvattam</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-800 hidden sm:block">Heritage Tree</h1>
             </div>
             
             <nav className="hidden md:flex items-center gap-6 text-[13px] font-medium text-slate-600">
-              <a href="#" className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-[19px] mt-[2px]">Family Tree</a>
-              <a href="#" className="hover:text-slate-900 transition-colors">Research</a>
-              <a href="#" className="hover:text-slate-900 transition-colors">DNA</a>
-              <a href="#" className="hover:text-slate-900 transition-colors">Projects</a>
+              <a href="#" className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-[19px] mt-[2px]">Tree</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Directory</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Statistics</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Settings</a>
             </nav>
           </div>
 
@@ -84,7 +84,7 @@ export default function Home() {
                 <Search size={16} className="text-slate-400" />
                 <input 
                   type="text" 
-                  placeholder="Search your family..." 
+                  placeholder="Search..." 
                   className="bg-transparent border-none outline-none text-sm w-48 placeholder:text-slate-400 text-slate-800"
                 />
              </div>

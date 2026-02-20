@@ -16,7 +16,7 @@ interface AddMemberModalProps {
 export default function AddMemberModal({ isOpen, onClose, onSave, parentId, members }: AddMemberModalProps) {
   const [formData, setFormData] = useState<Partial<FamilyMember>>({
     first_name: "",
-    last_name: "Cheruvattam",
+    last_name: "",
     gender: "male" as Gender,
     birth_date: "",
     father_id: parentId || "",
