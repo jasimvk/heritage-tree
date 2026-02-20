@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import FamilyTree from "@/components/FamilyTree";
 import AddMemberModal from "@/components/AddMemberModal";
 import { FamilyMember } from "@/types/family";
-import { Search, Plus, Filter } from "lucide-react";
+import { Search, Plus, Filter, Settings, Bell, ChevronDown } from "lucide-react";
 
 export default function Home() {
   const [members, setMembers] = useState<FamilyMember[]>([]);
@@ -61,65 +61,95 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#eaeff5] text-slate-900 font-sans selection:bg-blue-100 flex flex-col overflow-hidden">
       {/* Geni Professional Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-[#1a3a5f] text-white shadow-md">
-        <div className="max-w-full mx-auto px-4 h-12 flex justify-between items-center">
-          <div className="flex items-center gap-6">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+        <div className="max-w-full mx-auto px-4 h-14 flex justify-between items-center">
+          <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-blue-500 rounded-sm flex items-center justify-center font-black text-sm italic">
+              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white text-lg">
                 C
               </div>
-              <h1 className="text-sm font-bold tracking-tight">Cheruvattam Family</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-800 hidden sm:block">Cheruvattam</h1>
             </div>
             
-            <nav className="hidden md:flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider text-blue-200/70">
-              <a href="#" className="text-white border-b-2 border-blue-400 pb-0.5">Family Tree</a>
-              <a href="#" className="hover:text-white transition-colors">Directory</a>
-              <a href="#" className="hover:text-white transition-colors">Photos</a>
+            <nav className="hidden md:flex items-center gap-6 text-[13px] font-medium text-slate-600">
+              <a href="#" className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-[19px] mt-[2px]">Family Tree</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Research</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">DNA</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Projects</a>
             </nav>
           </div>
 
-          <div className="flex items-center gap-2">
-             <div className="hidden sm:flex items-center bg-[#2d4a6e] rounded px-2 py-1 gap-2 border border-[#3e5a7e]">
-                <Search size={14} className="text-blue-200/50" />
+          <div className="flex items-center gap-3">
+             <div className="hidden lg:flex items-center bg-slate-100 rounded-full px-3 py-1.5 gap-2 border border-slate-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                <Search size={16} className="text-slate-400" />
                 <input 
                   type="text" 
-                  placeholder="Search family..." 
-                  className="bg-transparent border-none outline-none text-[11px] w-32 placeholder:text-blue-200/30 text-white"
+                  placeholder="Search your family..." 
+                  className="bg-transparent border-none outline-none text-sm w-48 placeholder:text-slate-400 text-slate-800"
                 />
              </div>
-             <button 
-                onClick={() => handleAddMember()}
-                className="h-8 px-3 bg-[#4caf50] hover:bg-[#43a047] text-white rounded text-[11px] font-bold flex items-center gap-1.5 transition-colors shadow-sm"
-             >
-                <Plus size={14} strokeWidth={3} /> Add Person
-             </button>
+             
+             <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+             <div className="flex items-center gap-3 text-slate-500">
+                <button className="p-2 hover:bg-slate-100 rounded-full transition-colors relative">
+                    <Bell size={18} />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </button>
+                <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <Settings size={18} />
+                </button>
+                <button className="flex items-center gap-2 ml-1 hover:bg-slate-50 py-1 px-2 rounded-lg transition-colors border border-transparent hover:border-slate-200">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jasim" alt="User" />
+                    </div>
+                    <ChevronDown size={14} className="text-slate-400" />
+                </button>
+             </div>
           </div>
         </div>
       </header>
 
-      {/* Sub-toolbar */}
-      <div className="fixed top-12 left-0 right-0 z-30 bg-white border-b border-slate-300 h-10 flex items-center px-4 justify-between shadow-sm">
-          <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-500">
-             <div className="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 transition-colors">
-                <Filter size={12} />
-                <span>View Options</span>
+      {/* Toolbar / Actions Bar */}
+      <div className="fixed top-14 left-0 right-0 z-30 bg-white border-b border-slate-200 h-12 flex items-center px-4 justify-between shadow-sm">
+          <div className="flex items-center gap-2">
+             <button 
+                onClick={() => handleAddMember()}
+                className="h-8 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-[13px] flex items-center gap-2 transition-all shadow-sm active:scale-95"
+             >
+                <Plus size={16} strokeWidth={2.5} /> Add Relative
+             </button>
+             <div className="h-6 w-px bg-slate-200 mx-2"></div>
+             <div className="flex items-center gap-2 text-[13px] font-medium text-slate-600 bg-slate-50 px-3 py-1.5 rounded border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
+                <Filter size={14} />
+                <span>Filters</span>
+                <span className="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1">{members.length}</span>
              </div>
-             <span className="text-slate-200">|</span>
-             <span>Total Members: {members.length}</span>
           </div>
-          <div className="text-[10px] text-slate-400 font-medium italic">
-             Showing primary lineage for Cheruvattam Family
+          
+          <div className="flex items-center gap-3">
+             <span className="text-[12px] font-medium text-slate-400 uppercase tracking-wider hidden sm:block">View Mode:</span>
+             <div className="flex bg-slate-100 p-1 rounded border border-slate-200">
+                <button className="px-3 py-1 bg-white text-slate-800 text-[12px] font-bold rounded shadow-sm border border-slate-200">Tree</button>
+                <button className="px-3 py-1 text-slate-500 hover:text-slate-700 text-[12px] font-medium rounded transition-colors">List</button>
+             </div>
           </div>
       </div>
 
       {/* Main Viewport */}
-      <main className="flex-1 pt-[88px] h-screen overflow-hidden flex flex-col">
-        <div className="flex-1 w-full h-full relative bg-[#f0f2f5]">
+      <main className="flex-1 pt-[104px] h-screen overflow-hidden flex flex-col">
+        <div className="flex-1 w-full h-full relative bg-[#f2f4f7]">
+            {/* Grid Pattern Background */}
+            <div className="absolute inset-0 z-0 opacity-[0.4]" style={{ 
+                backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', 
+                backgroundSize: '24px 24px' 
+            }}></div>
+
             {isLoading ? (
-                <div className="flex justify-center items-center h-full">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="animate-spin rounded-sm h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
-                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Loading Tree...</p>
+                <div className="flex justify-center items-center h-full relative z-10">
+                    <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-xl shadow-xl border border-slate-100">
+                        <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest animate-pulse">Loading Lineage...</p>
                     </div>
                 </div>
             ) : (
