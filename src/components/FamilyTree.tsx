@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { FamilyMember } from "@/types/family";
 import MemberNode from "./MemberNode";
-import { Users, ZoomIn, ZoomOut, Move, RotateCcw } from "lucide-react";
+import { Users, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import * as d3 from "d3";
 
 interface FamilyTreeProps {
@@ -86,39 +86,69 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
     return { root, bounds: { minX, maxX, minY, maxY } };
   }, [rootNode]);
 
-  // Center tree on load
+  // Center tree on load & Responsive Resize
   useEffect(() => {
     if (layout && containerRef.current) {
       const { bounds } = layout;
       const { width, height } = containerRef.current.getBoundingClientRect();
       const treeWidth = bounds.maxX - bounds.minX;
-      const treeHeight = bounds.maxY - bounds.minY;
       
+      // Responsive initial scale: fit to width on mobile if tree is wide
+      let initialScale = 1;
+      if (width < 768) { // Mobile
+         if (treeWidth > width) initialScale = Math.max(0.5, width / (treeWidth + 100));
+      }
+
       setTransform({
-        x: width / 2 - (bounds.minX + treeWidth / 2),
+        x: width / 2 - ((bounds.minX + treeWidth / 2) * initialScale),
         y: 50, // Padding top
-        k: 1
+        k: initialScale
       });
     }
   }, [layout]);
 
-  // Panning Handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
+  // Unified Start Handler (Mouse & Touch)
+  const handleStart = (clientX: number, clientY: number) => {
     setIsDragging(true);
-    setDragStart({ x: e.clientX - transform.x, y: e.clientY - transform.y });
+    setDragStart({ x: clientX - transform.x, y: clientY - transform.y });
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  // Unified Move Handler (Mouse & Touch)
+  const handleMove = (clientX: number, clientY: number) => {
     if (isDragging) {
       setTransform(prev => ({
         ...prev,
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        x: clientX - dragStart.x,
+        y: clientY - dragStart.y
       }));
     }
   };
 
-  const handleMouseUp = () => setIsDragging(false);
+  const handleEnd = () => setIsDragging(false);
+
+  // Mouse Events
+  const onMouseDown = (e: React.MouseEvent) => handleStart(e.clientX, e.clientY);
+  const onMouseMove = (e: React.MouseEvent) => {
+      if (isDragging) {
+          e.preventDefault(); // Prevent text selection while dragging
+          handleMove(e.clientX, e.clientY);
+      }
+  }
+  
+  // Touch Events
+  const onTouchStart = (e: React.TouchEvent) => {
+      if (e.touches.length === 1) {
+          handleStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+  }
+  const onTouchMove = (e: React.TouchEvent) => {
+      if (isDragging && e.touches.length === 1) {
+          // Prevent default scrolling only if we are actively dragging the tree horizontally/vertically
+          // e.preventDefault(); 
+          handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+  }
+
   const handleWheel = (e: React.WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
@@ -145,38 +175,41 @@ export default function FamilyTree({ members, onAddMember }: FamilyTreeProps) {
 
   return (
     <div 
-      className="relative w-full h-[80vh] overflow-hidden bg-[#f0f2f5] border border-slate-300 rounded-lg shadow-inner select-none cursor-grab active:cursor-grabbing"
+      className="relative w-full h-[85vh] overflow-hidden bg-[#f0f2f5] border-t md:border border-slate-200 md:rounded-lg shadow-inner select-none cursor-grab active:cursor-grabbing touch-none"
       ref={containerRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={handleEnd}
+      onMouseLeave={handleEnd}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={handleEnd}
       onWheel={handleWheel}
     >
-      {/* Controls */}
-      <div className="absolute top-4 right-4 z-50 flex flex-col gap-2 bg-white p-2 rounded shadow-md border border-slate-200">
+      {/* Mobile-Friendly Controls */}
+      <div className="absolute bottom-6 right-6 md:top-4 md:right-4 z-50 flex flex-row md:flex-col gap-3 bg-white/90 backdrop-blur-sm p-2 rounded-full md:rounded-lg shadow-lg border border-slate-200">
         <button 
           onClick={() => setTransform(prev => ({ ...prev, k: Math.min(2, prev.k + 0.2) }))}
-          className="p-2 hover:bg-slate-100 rounded text-slate-600" title="Zoom In"
+          className="p-3 md:p-2 hover:bg-slate-100 rounded-full md:rounded text-slate-700 active:scale-95 transition-transform" title="Zoom In"
         >
-          <ZoomIn size={18} />
+          <ZoomIn size={20} />
         </button>
         <button 
           onClick={() => setTransform(prev => ({ ...prev, k: Math.max(0.1, prev.k - 0.2) }))}
-          className="p-2 hover:bg-slate-100 rounded text-slate-600" title="Zoom Out"
+          className="p-3 md:p-2 hover:bg-slate-100 rounded-full md:rounded text-slate-700 active:scale-95 transition-transform" title="Zoom Out"
         >
-          <ZoomOut size={18} />
+          <ZoomOut size={20} />
         </button>
         <button 
           onClick={() => setTransform({ x: containerRef.current?.offsetWidth! / 2 || 0, y: 50, k: 1 })}
-          className="p-2 hover:bg-slate-100 rounded text-slate-600" title="Reset View"
+          className="p-3 md:p-2 hover:bg-slate-100 rounded-full md:rounded text-slate-700 active:scale-95 transition-transform" title="Reset View"
         >
-          <RotateCcw size={18} />
+          <RotateCcw size={20} />
         </button>
       </div>
 
       <div 
-        className="absolute origin-top-left transition-transform duration-75 ease-out"
+        className="absolute origin-top-left transition-transform duration-100 ease-out will-change-transform"
         style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})` }}
       >
         {/* SVG Links */}
