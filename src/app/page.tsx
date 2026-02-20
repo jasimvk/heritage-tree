@@ -59,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eaeff5] text-slate-900 font-sans selection:bg-blue-100">
+    <div className="min-h-screen bg-[#eaeff5] text-slate-900 font-sans selection:bg-blue-100 flex flex-col overflow-hidden">
       {/* Geni Professional Header */}
       <header className="fixed top-0 left-0 right-0 z-40 bg-[#1a3a5f] text-white shadow-md">
         <div className="max-w-full mx-auto px-4 h-12 flex justify-between items-center">
@@ -84,7 +84,7 @@ export default function Home() {
                 <input 
                   type="text" 
                   placeholder="Search family..." 
-                  className="bg-transparent border-none outline-none text-[11px] w-32 placeholder:text-blue-200/30"
+                  className="bg-transparent border-none outline-none text-[11px] w-32 placeholder:text-blue-200/30 text-white"
                 />
              </div>
              <button 
@@ -98,9 +98,9 @@ export default function Home() {
       </header>
 
       {/* Sub-toolbar */}
-      <div className="fixed top-12 left-0 right-0 z-30 bg-white border-b border-slate-300 h-10 flex items-center px-4 justify-between">
+      <div className="fixed top-12 left-0 right-0 z-30 bg-white border-b border-slate-300 h-10 flex items-center px-4 justify-between shadow-sm">
           <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-500">
-             <div className="flex items-center gap-1.5 cursor-pointer hover:text-blue-600">
+             <div className="flex items-center gap-1.5 cursor-pointer hover:text-blue-600 transition-colors">
                 <Filter size={12} />
                 <span>View Options</span>
              </div>
@@ -113,11 +113,14 @@ export default function Home() {
       </div>
 
       {/* Main Viewport */}
-      <main className="pt-24 min-h-screen overflow-auto">
-        <div className="p-4 md:p-8">
+      <main className="flex-1 pt-[88px] h-screen overflow-hidden flex flex-col">
+        <div className="flex-1 w-full h-full relative bg-[#f0f2f5]">
             {isLoading ? (
-                <div className="flex justify-center items-center h-[60vh]">
-                    <div className="animate-spin rounded-sm h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+                <div className="flex justify-center items-center h-full">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="animate-spin rounded-sm h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Loading Tree...</p>
+                    </div>
                 </div>
             ) : (
                 <FamilyTree members={members} onAddMember={handleAddMember} />
